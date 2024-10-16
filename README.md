@@ -12,6 +12,7 @@ This project is a hands-on journey using Mininet to build various network topolo
 | **Hypervisor**             | VirtualBox         |
 | **Network Emulation Tool** | Mininet v2.3.0     |
 | **Terminal Emulator**      | PuTTY v0.81        |
+| Python                     | Python 2.7.12      | 
 
 ### Installations  
 
