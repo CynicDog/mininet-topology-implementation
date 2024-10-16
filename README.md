@@ -24,12 +24,10 @@ Go to the VM image download page ([https://github.com/mininet/mininet/releases/]
 #### PuTTY 
 Go to PuTTY's download page ([https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html)) and download an installer package. 
 
-### Emulate Ubuntu Server Terminal with PuTTY (Connect to Mininet via PuTTY) 
-You need to configure the host-only Ethernet adapter to enable direct communication between the Mininet VM and the host machine, allowing PuTTY to connect using the assigned IP address. 
+<details><summary><h3>Emulate Ubuntu Server Terminal with PuTTY (Connect to Mininet via PuTTY) </h3></summary>
 
-> [!NOTE]  
-> VirtualBox's host-only network adapter is a virtual network interface in VirtualBox (or other hypervisors) that allows the VM (your Mininet VM) to communicate only with the host machine (your physical computer).
-
+You need to configure the host-only Ethernet adapter to enable direct communication between the Mininet VM and the host machine, allowing PuTTY to connect using the assigned IP address. VirtualBox's host-only network adapter is a virtual network interface in VirtualBox that allows the VM to communicate only with the host machine.
+ 
 Here's the step to connect to Mininet via PuTTY: 
 
 1. Open the VirtualBox application by running the downloaded Mininet image (an executable OVF file), then navigate to the main Tools menu and select Host Network Manager.
@@ -57,3 +55,5 @@ Here's the step to connect to Mininet via PuTTY:
             ... 
    ```
 5. Open PuTTY and connect to the IP address `192.168.64.3` using port 22. When prompted, log in with the username and password, both set to `mininet`. That's it! 
+
+</details>
