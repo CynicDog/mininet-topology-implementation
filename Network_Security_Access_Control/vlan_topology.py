@@ -23,6 +23,7 @@ class VLANHost(Host):
         # assign the specified IP address to the new VLAN interface.
         self.cmd('ifconfig %s.%d inet %s' % (intf, vlan, params['ip']))
 
+        # Update the interface name to the VLAN version and map it in the host's interface list
         newName = '%s.%d' % (intf, vlan)
         intf.name = newName
         self.nameToIntf[newName] = intf
