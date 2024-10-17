@@ -4,7 +4,7 @@
 
 ### Report
 
-- Network connection in the same VLAN (h1 to h4):
+#### Network connection in the same VLAN (h1 to h4):
 ```bash
 mininet> h1 ping -c 3 h4
 PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
@@ -13,19 +13,19 @@ PING 10.0.0.2 (10.0.0.2) 56(84) bytes of data.
 64 bytes from 10.0.0.2: icmp_seq=3 ttl=64 time=0.038 ms
 ```
 
-- Network connection across different VLANs (h1 to h2):
+#### Network connection across different VLANs (h1 to h2):
 ```bash
 mininet> h1 ping -c 3 h2
 connect: Network is unreachable
 ```
 
-- ARP Table for h1:
+#### ARP Table for h1:
 ```bash
 mininet> h1 arp -a
 ? (10.0.0.2) at a6:f4:1e:17:e7:6e [ether] on h1-eth0.10
 ```
 
-- ARP Table for h2:
+#### ARP Table for h2:
 ```bash
 mininet> h2 arp -a
 ```
