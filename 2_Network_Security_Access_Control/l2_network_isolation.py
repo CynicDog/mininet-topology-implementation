@@ -33,12 +33,12 @@ class SingleSwitchVlanTopo(Topo):
         switch = self.addSwitch('s1')
 
         # Create hosts and connect them to the switch with VLANs
-        host1 = self.addHost('h1', cls=VLANHost, vlan=10, ip='10.0.0.1/24')
-        host2 = self.addHost('h2', cls=VLANHost, vlan=20, ip='10.0.1.1/24')
-        host3 = self.addHost('h3', cls=VLANHost, vlan=30, ip='10.0.2.1/24')
+        host1 = self.addHost('h1', cls=VLANHost, vlan=10, ip='172.16.1.2/26')
+        host2 = self.addHost('h2', cls=VLANHost, vlan=20, ip='172.16.1.66/26')
+        host3 = self.addHost('h3', cls=VLANHost, vlan=30, ip='172.16.1.130/26')
 
         # Add host4 in the same VLAN as host1
-        host4 = self.addHost('h4', cls=VLANHost, vlan=10, ip='10.0.0.2/24')
+        host4 = self.addHost('h4', cls=VLANHost, vlan=10, ip='172.16.1.3/26')
 
         self.addLink(host1, switch)
         self.addLink(host2, switch)
