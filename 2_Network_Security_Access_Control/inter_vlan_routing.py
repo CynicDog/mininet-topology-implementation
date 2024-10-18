@@ -78,7 +78,7 @@ class MultiSwitchVlanTopo(Topo):
         for i in range(4, 7):
             self.addLink('h{}'.format(i), switch2)
 
-        # Connect switches with trunk links
+        # Connect switches
         self.addLink(switch1, switch2)
 
         # Connect s2 to router r1
@@ -100,6 +100,18 @@ def run():
     net.get('h4').cmd('ip route add default via 172.16.1.1')
     net.get('h5').cmd('ip route add default via 172.16.1.65')
     net.get('h6').cmd('ip route add default via 172.16.1.129')
+
+    # Explicitly set the trunk ports for VLANs on the trunk link between switches
+    switch1 = net.get('s1')
+    switch2 = net.get('s2')
+
+    # Get the interfaces connected between s1 and s2
+    intf1 = switch1.intf('s1-eth4')
+    intf2 = switch2.intf('s2-eth4')
+
+    # Set trunk mode and allow VLANs 10, 20, and 30
+    switch1.cmd('ovs-vsctl set port {} vlan_mode=trunk trunk=10,20,30'.format(intf1))
+    switch2.cmd('ovs-vsctl set port {} vlan_mode=trunk trunk=10,20,30'.format(intf2))
 
     # Start CLI
     CLI(net)
