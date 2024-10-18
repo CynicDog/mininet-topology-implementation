@@ -16,15 +16,19 @@ class LinuxRouter(Node):
 
         # Configure router sub-interfaces for inter-VLAN routing
         self.cmd('ifconfig %s 0' % self.defaultIntf())  # Resetting the base interface
+        
+        # Establish VLAN memberships 
         self.cmd('vconfig add %s 10' % self.defaultIntf())  # VLAN 10
         self.cmd('vconfig add %s 20' % self.defaultIntf())  # VLAN 20
         self.cmd('vconfig add %s 30' % self.defaultIntf())  # VLAN 30
+        
         self.cmd('ifconfig %s.10 up' % self.defaultIntf())
         self.cmd('ifconfig %s.20 up' % self.defaultIntf())
         self.cmd('ifconfig %s.30 up' % self.defaultIntf())
-        self.cmd('ifconfig %s.10 10.0.0.254 netmask 255.255.255.0' % self.defaultIntf())
-        self.cmd('ifconfig %s.20 10.0.1.254 netmask 255.255.255.0' % self.defaultIntf())
-        self.cmd('ifconfig %s.30 10.0.2.254 netmask 255.255.255.0' % self.defaultIntf())
+        
+        self.cmd('ifconfig %s.10 172.16.1.1 netmask 255.255.255.192' % self.defaultIntf())
+        self.cmd('ifconfig %s.20 172.16.1.65 netmask 255.255.255.192' % self.defaultIntf())
+        self.cmd('ifconfig %s.30 172.16.1.129 netmask 255.255.255.192' % self.defaultIntf())
 
     def terminate(self):
         self.cmd('sysctl net.ipv4.ip_forward=0')
@@ -60,13 +64,13 @@ class MultiSwitchVlanTopo(Topo):
 
         # Create hosts and connect them to the switches with VLANs
         # Hosts connected to switch1
-        self.addHost('h1', cls=VLANHost, vlan=10, ip='10.0.0.1/24')
-        self.addHost('h2', cls=VLANHost, vlan=20, ip='10.0.1.1/24')
-        self.addHost('h3', cls=VLANHost, vlan=30, ip='10.0.2.1/24')
+        self.addHost('h1', cls=VLANHost, vlan=10, ip='172.16.1.2/26')  
+        self.addHost('h2', cls=VLANHost, vlan=20, ip='172.16.1.66/26') 
+        self.addHost('h3', cls=VLANHost, vlan=30, ip='172.16.1.130/26') 
         # Hosts connected to switch2
-        self.addHost('h4', cls=VLANHost, vlan=10, ip='10.0.0.2/24')
-        self.addHost('h5', cls=VLANHost, vlan=20, ip='10.0.1.2/24')
-        self.addHost('h6', cls=VLANHost, vlan=30, ip='10.0.2.2/24')
+        self.addHost('h4', cls=VLANHost, vlan=10, ip='172.16.1.3/26') 
+        self.addHost('h5', cls=VLANHost, vlan=20, ip='172.16.1.67/26') 
+        self.addHost('h6', cls=VLANHost, vlan=30, ip='172.16.1.131/26') 
 
         # Connect hosts to switches
         for i in range(1, 4):
@@ -88,13 +92,14 @@ def run():
 
     # Start the network
     net.start()
-    # # Set default gateways for hosts
-    net.get('h1').cmd('ip route add default via 10.0.0.254')
-    net.get('h2').cmd('ip route add default via 10.0.1.254')
-    net.get('h3').cmd('ip route add default via 10.0.2.254')
-    net.get('h4').cmd('ip route add default via 10.0.0.254')
-    net.get('h5').cmd('ip route add default via 10.0.1.254')
-    net.get('h6').cmd('ip route add default via 10.0.2.254')
+
+    # Set default gateways for hosts
+    net.get('h1').cmd('ip route add default via 172.16.1.1')
+    net.get('h2').cmd('ip route add default via 172.16.1.65')
+    net.get('h3').cmd('ip route add default via 172.16.1.129')
+    net.get('h4').cmd('ip route add default via 172.16.1.1')
+    net.get('h5').cmd('ip route add default via 172.16.1.65')
+    net.get('h6').cmd('ip route add default via 172.16.1.129')
 
     # Start CLI
     CLI(net)
@@ -104,18 +109,3 @@ def run():
 
 if __name__ == '__main__':
     run()
-
-# result
-
-# mininet> pingall
-# *** Ping: testing ping reachability
-# h1 -> h2 h3 h4 h5 h6 X
-# h2 -> h1 h3 h4 h5 h6 X
-# h3 -> h1 h2 h4 h5 h6 X
-# h4 -> h1 h2 h3 h5 h6 X
-# h5 -> h1 h2 h3 h4 h6 X
-# h6 -> h1 h2 h3 h4 h5 X
-# r1 -> h1 h2 h3 h4 h5 h6
-# *** Results: 14% dropped (36/42 received)
-# mininet> h1 ping r1
-# ping: unknown host r1
