@@ -75,7 +75,7 @@ The hosts connected to Switch `s2` are:
 - Host `h5` with IP address `172.16.1.67` (VLAN 20)
 - Host `h6` with IP address `172.16.1.131` (VLAN 30)
 
-Switch `s1` and Switch `s2` are interconnected through a trunk link, allowing VLAN traffic to flow between them. Additionally, Switch `s2` connects to a Linux Router `(r1)`, which facilitates inter-VLAN routing for communication across different subnets.
+Switch `s1` and Switch `s2` are interconnected through a trunk link, allowing VLAN traffic to flow between them. Additionally, Switch `s2` connects to a Linux Router (`r1`), which facilitates inter-VLAN routing for communication across different subnets.
 
 ### Report 
 
