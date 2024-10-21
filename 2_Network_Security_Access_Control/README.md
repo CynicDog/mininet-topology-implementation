@@ -349,7 +349,7 @@ type                : ""
 
 </details>
 
-<details><sumamry><h4> Bridge Protocol Data Units (BPDUs) on a port of the root bridge (`s3-eth1`) </h4></sumamry>
+<details><summary><h4> Bridge Protocol Data Units (BPDUs) on a port of the root bridge (`s3-eth1`) </h4></summary>
 
 ```bash
 mininet> s1 tcpdump -i s3-eth1 -n
@@ -362,8 +362,22 @@ listening on s3-eth1, link-type EN10MB (Ethernet), capture size 262144 bytes
 01:54:27.313642 STP 802.1d, Config, Flags [none], bridge-id 1000.52:54:00:16:5d:53.8001, length 35
 ...
 ```
-> [1] Advertisement from `s1` as a root bridge candidate
+> [1] Advertisement from `s1` as a root bridge candidate. 
 >
 > [2] BPDU from the selected root bridge (`s3`), which has the lowest bridge ID (priority 1000).
 
 </details>
+
+<details>
+<summary><h4>Network connection in the same VLAN</h4></summary>
+
+```bash
+mininet> pingall
+*** Ping: testing ping reachability
+h1 -> h2
+h2 -> h1
+*** Results: 0% dropped (2/2 received)
+```
+> The test may not show results due to the time required for STP convergence before forwarding traffic. Wait for the STP convergence and test again if failed. 
+
+</details> 
