@@ -6,29 +6,34 @@ from mininet.cli import CLI
 from mininet.log import setLogLevel
 from mininet.node import Host, Node
 
+
 # Custom LinuxRouter class
 class LinuxRouter(Node):
     def config(self, **params):
         super(LinuxRouter, self).config(**params)
 
-        # Enable forwarding on the router
+        # Enable IP forwarding
         self.cmd('sysctl net.ipv4.ip_forward=1')
 
-        # Configure router sub-interfaces for inter-VLAN routing
-        self.cmd('ifconfig %s 0' % self.defaultIntf())  # Resetting the base interface
-        
-        # Establish VLAN memberships 
-        self.cmd('vconfig add %s 10' % self.defaultIntf())  # VLAN 10
-        self.cmd('vconfig add %s 20' % self.defaultIntf())  # VLAN 20
-        self.cmd('vconfig add %s 30' % self.defaultIntf())  # VLAN 30
-        
-        self.cmd('ifconfig %s.10 up' % self.defaultIntf())
-        self.cmd('ifconfig %s.20 up' % self.defaultIntf())
-        self.cmd('ifconfig %s.30 up' % self.defaultIntf())
-        
-        self.cmd('ifconfig %s.10 172.16.1.1 netmask 255.255.255.192' % self.defaultIntf())
-        self.cmd('ifconfig %s.20 172.16.1.65 netmask 255.255.255.192' % self.defaultIntf())
-        self.cmd('ifconfig %s.30 172.16.1.129 netmask 255.255.255.192' % self.defaultIntf())
+        # Reset and configure VLAN interfaces
+        self.configureVLANs([10, 20, 30])
+
+    def configureVLANs(self, vlan_ids):
+        base_intf = self.defaultIntf()
+        netmask = '255.255.255.192'
+        vlan_ips = {10: '172.16.1.1', 20: '172.16.1.65', 30: '172.16.1.129'}
+
+        # Reset the base interface
+        self.cmd('ifconfig {} 0'.format(base_intf))
+
+        # Establish VLAN memberships and configure interfaces
+        for vlan_id in vlan_ids:
+            self.cmd('vconfig add {} {}'.format(base_intf, vlan_id))
+            self.cmd('ifconfig {}.{} up'.format(base_intf, vlan_id))
+
+            # Assign IP addresses to the VLAN interfaces
+        for vlan_id, ip in vlan_ips.items():
+            self.cmd('ifconfig {}.{} {} netmask {}'.format(base_intf, vlan_id, ip, netmask))
 
     def terminate(self):
         self.cmd('sysctl net.ipv4.ip_forward=0')
@@ -68,13 +73,13 @@ class MultiSwitchVlanTopo(Topo):
 
         # Create hosts and connect them to the switches with VLANs
         # Hosts connected to switch1
-        self.addHost('h1', cls=VLANHost, vlan=10, ip='172.16.1.2/26', gateway='172.16.1.1')  
-        self.addHost('h2', cls=VLANHost, vlan=20, ip='172.16.1.66/26', gateway='172.16.1.65') 
-        self.addHost('h3', cls=VLANHost, vlan=30, ip='172.16.1.130/26', gateway='172.16.1.129') 
+        self.addHost('h1', cls=VLANHost, vlan=10, ip='172.16.1.2/26', gateway='172.16.1.1')
+        self.addHost('h2', cls=VLANHost, vlan=20, ip='172.16.1.66/26', gateway='172.16.1.65')
+        self.addHost('h3', cls=VLANHost, vlan=30, ip='172.16.1.130/26', gateway='172.16.1.129')
         # Hosts connected to switch2
-        self.addHost('h4', cls=VLANHost, vlan=10, ip='172.16.1.3/26', gateway='172.16.1.1') 
-        self.addHost('h5', cls=VLANHost, vlan=20, ip='172.16.1.67/26', gateway='172.16.1.65') 
-        self.addHost('h6', cls=VLANHost, vlan=30, ip='172.16.1.131/26', gateway='172.16.1.129') 
+        self.addHost('h4', cls=VLANHost, vlan=10, ip='172.16.1.3/26', gateway='172.16.1.1')
+        self.addHost('h5', cls=VLANHost, vlan=20, ip='172.16.1.67/26', gateway='172.16.1.65')
+        self.addHost('h6', cls=VLANHost, vlan=30, ip='172.16.1.131/26', gateway='172.16.1.129')
 
         # Connect hosts to switches
         for i in range(1, 4):
@@ -114,6 +119,7 @@ def run():
 
     # Stop the network
     net.stop()
+
 
 if __name__ == '__main__':
     run()
