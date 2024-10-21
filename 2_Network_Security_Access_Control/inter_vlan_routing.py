@@ -36,7 +36,7 @@ class LinuxRouter(Node):
 
 # Custom VLANHost class
 class VLANHost(Host):
-    def config(self, vlan=100, **params):
+    def config(self, vlan=100, gateway=None, **params):
         super(VLANHost, self).config(**params)
 
         intf = self.defaultIntf()
@@ -55,6 +55,10 @@ class VLANHost(Host):
         intf.name = newName
         self.nameToIntf[newName] = intf
 
+        # Set the default route for this host if a gateway is provided
+        if gateway:
+            self.setDefaultRoute('dev %s via %s' % (newName, gateway))
+
 # Custom topology class
 class MultiSwitchVlanTopo(Topo):
     def build(self):
@@ -64,13 +68,13 @@ class MultiSwitchVlanTopo(Topo):
 
         # Create hosts and connect them to the switches with VLANs
         # Hosts connected to switch1
-        self.addHost('h1', cls=VLANHost, vlan=10, ip='172.16.1.2/26')  
-        self.addHost('h2', cls=VLANHost, vlan=20, ip='172.16.1.66/26') 
-        self.addHost('h3', cls=VLANHost, vlan=30, ip='172.16.1.130/26') 
+        self.addHost('h1', cls=VLANHost, vlan=10, ip='172.16.1.2/26', gateway='172.16.1.1')  
+        self.addHost('h2', cls=VLANHost, vlan=20, ip='172.16.1.66/26', gateway='172.16.1.65') 
+        self.addHost('h3', cls=VLANHost, vlan=30, ip='172.16.1.130/26', gateway='172.16.1.129') 
         # Hosts connected to switch2
-        self.addHost('h4', cls=VLANHost, vlan=10, ip='172.16.1.3/26') 
-        self.addHost('h5', cls=VLANHost, vlan=20, ip='172.16.1.67/26') 
-        self.addHost('h6', cls=VLANHost, vlan=30, ip='172.16.1.131/26') 
+        self.addHost('h4', cls=VLANHost, vlan=10, ip='172.16.1.3/26', gateway='172.16.1.1') 
+        self.addHost('h5', cls=VLANHost, vlan=20, ip='172.16.1.67/26', gateway='172.16.1.65') 
+        self.addHost('h6', cls=VLANHost, vlan=30, ip='172.16.1.131/26', gateway='172.16.1.129') 
 
         # Connect hosts to switches
         for i in range(1, 4):
@@ -92,14 +96,6 @@ def run():
 
     # Start the network
     net.start()
-
-    # Set default gateways for hosts
-    net.get('h1').cmd('ip route add default via 172.16.1.1')
-    net.get('h2').cmd('ip route add default via 172.16.1.65')
-    net.get('h3').cmd('ip route add default via 172.16.1.129')
-    net.get('h4').cmd('ip route add default via 172.16.1.1')
-    net.get('h5').cmd('ip route add default via 172.16.1.65')
-    net.get('h6').cmd('ip route add default via 172.16.1.129')
 
     # Explicitly set the trunk ports for VLANs on the trunk link between switches
     switch1 = net.get('s1')
