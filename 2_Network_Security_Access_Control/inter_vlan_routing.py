@@ -6,7 +6,6 @@ from mininet.cli import CLI
 from mininet.log import setLogLevel
 from mininet.node import Host, Node
 
-
 # Custom LinuxRouter class
 class LinuxRouter(Node):
     def config(self, **params):
@@ -15,10 +14,10 @@ class LinuxRouter(Node):
         # Enable IP forwarding
         self.cmd('sysctl net.ipv4.ip_forward=1')
 
-        # Reset and configure VLAN interfaces
-        self.configureVLANs([10, 20, 30])
+        # Configure VLAN interfaces directly from the vlan_ips dictionary
+        self.configureVLANs()
 
-    def configureVLANs(self, vlan_ids):
+    def configureVLANs(self):
         base_intf = self.defaultIntf()
         netmask = '255.255.255.192'
         vlan_ips = {10: '172.16.1.1', 20: '172.16.1.65', 30: '172.16.1.129'}
@@ -27,13 +26,12 @@ class LinuxRouter(Node):
         self.cmd('ifconfig {} 0'.format(base_intf))
 
         # Establish VLAN memberships and configure interfaces
-        for vlan_id in vlan_ids:
+        for vlan_id in vlan_ips.keys():
             self.cmd('vconfig add {} {}'.format(base_intf, vlan_id))
             self.cmd('ifconfig {}.{} up'.format(base_intf, vlan_id))
 
             # Assign IP addresses to the VLAN interfaces
-        for vlan_id, ip in vlan_ips.items():
-            self.cmd('ifconfig {}.{} {} netmask {}'.format(base_intf, vlan_id, ip, netmask))
+            self.cmd('ifconfig {}.{} {} netmask {}'.format(base_intf, vlan_id, vlan_ips[vlan_id], netmask))
 
     def terminate(self):
         self.cmd('sysctl net.ipv4.ip_forward=0')
