@@ -1,9 +1,10 @@
 from mininet.topo import Topo
 from mininet.net import Mininet
 from mininet.node import OVSSwitch
+from mininet.log import setLogLevel
 from mininet.cli import CLI
 
-class SpanningTreeTopo(Topo):
+class CustomSTPTopo(Topo):
     def build(self):
         # Create four switches
         s1 = self.addSwitch('s1', cls=OVSSwitch)
@@ -18,8 +19,17 @@ class SpanningTreeTopo(Topo):
         self.addLink(s1, s2)
         self.addLink(s2, s4)
 
+        # Add end hosts
+        h1 = self.addHost('h1', ip='10.0.0.1')
+        h2 = self.addHost('h2', ip='10.0.0.2')
+
+        # Connect hosts to the switches
+        self.addLink(h1, s3)
+        self.addLink(h2, s2)
+
 def run():
-    topo = SpanningTreeTopo()
+    setLogLevel('info')
+    topo = CustomSTPTopo()
     net = Mininet(topo=topo, switch=OVSSwitch, waitConnected=True)
 
     # Start the network
@@ -45,7 +55,7 @@ def run():
     for switch in ['s1', 's2', 's4']:
         net.get(switch).cmd('ovs-vsctl set Bridge {} other-config:stp-priority=32768'.format(switch))
 
-    # Run CLI for testing
+    # Run CLI for further testing
     CLI(net)
 
     # Stop the network
