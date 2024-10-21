@@ -4,7 +4,7 @@ from mininet.node import OVSSwitch
 from mininet.log import setLogLevel
 from mininet.cli import CLI
 
-class CustomSTPTopo(Topo):
+class SpanningTreeProtocolTopo(Topo):
     def build(self):
         # Create four switches
         s1 = self.addSwitch('s1', cls=OVSSwitch)
@@ -29,7 +29,7 @@ class CustomSTPTopo(Topo):
 
 def run():
     setLogLevel('info')
-    topo = CustomSTPTopo()
+    topo = SpanningTreeProtocolTopo()
     net = Mininet(topo=topo, switch=OVSSwitch, waitConnected=True)
 
     # Start the network
