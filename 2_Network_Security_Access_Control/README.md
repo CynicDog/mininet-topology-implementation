@@ -243,7 +243,7 @@ There are two end hosts: `h1` is connected to the root bridge (`s3`), and `h2` i
 
 ### Report 
 
-<details><summary><h4> Summary and STP status on switches </h4></summary>
+<details><summary><h4>STP status of switches</h4></summary>
 
 ```bash
 mininet> s1 ovs-vsctl list Bridge 
@@ -312,7 +312,7 @@ stp_enable          : true
 
 </details>
 
-<details><summary><h4>Interface details and status of ports</h4></summary>
+<details><summary><h4>Interface details</h4></summary>
 
 ```bash
 mininet> s1 ovs-vsctl list Interface 
@@ -355,7 +355,7 @@ type                : ""
 
 </details>
 
-<details><summary><h4> Bridge Protocol Data Units (BPDUs) on a port of the root bridge (`s3-eth1`) </h4></summary>
+<details><summary><h4>Bridge Protocol Data Units (BPDUs) on a port of the root bridge (<code>s3-eth1</code>)</h4></summary>
 
 ```bash
 mininet> s1 tcpdump -i s3-eth1 -n
