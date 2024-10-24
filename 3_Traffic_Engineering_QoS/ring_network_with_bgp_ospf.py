@@ -57,9 +57,7 @@ def run():
     net.start()
 
     # Clear PID files
-    os.system("rm /tmp/bgpd-*.pid")
-    os.system("rm /tmp/ospfd-*.pid")
-    os.system("rm /tmp/zebra-*.pid")
+    os.system("killall -9 zebra bgpd ospfd > /dev/null 2>&1")
 
 
     for router in ['r1', 'r2', 'r3', 'r4']:
