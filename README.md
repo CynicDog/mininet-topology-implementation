@@ -76,7 +76,7 @@ Here's the step to connect to Mininet via PuTTY:
 ## Software Defined Networking (Coursera | The University of Chicago) 
 *by Prof. Nick Feamster*  
 
-<details><summary><h2>Below are my key takeaways from the course.</h2></summary>
+<details><summary>Below are my key takeaways from the course.</summary>
 
 <details><summary><h3>Course Overview</h3></summary>
 
